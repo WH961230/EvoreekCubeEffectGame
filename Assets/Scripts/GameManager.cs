@@ -31,6 +31,11 @@ public struct Node
     public int line;
     public int column;
     public Transform nodeTran;
+
+    public void SetNodeColor(Color color)
+    {
+        nodeTran.GetComponent<Image>().color = color;
+    }
 }
 
 [Serializable]
@@ -39,6 +44,15 @@ public class Shape
     public Node[] nodes;
     public Node keyNode;
     public EmShapeType shapeType;
+
+    public void SetNodeColor(Color color)
+    {
+        if (this.nodes == null) return;
+        foreach (var node in nodes)
+        {
+            node.nodeTran.GetComponent<Image>().color = color;
+        }
+    }
 }
 
 public class GameManager : MonoBehaviour
@@ -57,7 +71,8 @@ public class GameManager : MonoBehaviour
     private readonly Transform[][] _columns = new Transform[TotalLine][];
     private bool _createOrder = false;
     private bool _isCanCheckRemove = false;
-    
+    private readonly Color DefaultColor = Color.white; 
+
     private Shape CreateShapeByTypeAndKeyNode(int line, int column, EmShapeType type)
     {
         var shape = new Shape();
@@ -65,24 +80,31 @@ public class GameManager : MonoBehaviour
         {
             case EmShapeType.O:
                 shape = CreateShapeOfO(line, column);
+                Debug.Log("创建图案 O");
                 break;
             case EmShapeType.I:
                 shape = CreateShapeOfI(line, column);
+                Debug.Log("创建图案 I");
                 break;
             case EmShapeType.L:
                 shape = CreateShapeOfL(line, column);
+                Debug.Log("创建图案 L");
                 break;
             case EmShapeType.J:
                 shape = CreateShapeOfJ(line, column);
+                Debug.Log("创建图案 J");
                 break;
             case EmShapeType.S:
                 shape = CreateShapeOfS(line, column);
+                Debug.Log("创建图案 S");
                 break;
             case EmShapeType.Z:
                 shape = CreateShapeOfZ(line, column);
+                Debug.Log("创建图案 Z");
                 break;
             case EmShapeType.T:
                 shape = CreateShapeOfT(line, column);
+                Debug.Log("创建图案 T");
                 break;
         }
 
@@ -98,14 +120,19 @@ public class GameManager : MonoBehaviour
         switch (type)
         {
             case EmColor.Red:
+                Debug.Log("创建随机颜色红色");
                 return Color.red;
             case EmColor.Blue:
+                Debug.Log("创建随机颜色蓝色");
                 return Color.blue;
             case EmColor.Green:
+                Debug.Log("创建随机颜色绿色");
                 return Color.green;
             case EmColor.Yellow:
+                Debug.Log("创建随机颜色黄色");
                 return Color.yellow;
             default:
+                Debug.Log("创建随机颜色红色");
                 return Color.red;
         }
     }
@@ -113,18 +140,16 @@ public class GameManager : MonoBehaviour
     private Shape CreateShapeOfI(int line, int column)
     {
         var shape = new Shape();
-        var color = CreateRandomColor();
-
         if (line - 1 >= 0 && line + 2 < TotalLine)
         {
             if (column >= 0 && column < TotalColumn)
             {
                 var nodes = new Node[NodeNum];
 
-                nodes[0] = CreateNode(line, column, true, true, false, color);
-                nodes[1] = CreateNode(line - 1, column, false, true, false, color);
-                nodes[2] = CreateNode(line + 1, column, false, true, false, color);
-                nodes[3] = CreateNode(line + 2, column, false, true, false, color);
+                nodes[0] = SetNode(line, column, true, true, false);
+                nodes[1] = SetNode(line - 1, column, false, true, false);
+                nodes[2] = SetNode(line + 1, column, false, true, false);
+                nodes[3] = SetNode(line + 2, column, false, true, false);
 
                 shape.keyNode = nodes[0];
                 shape.nodes = nodes;
@@ -138,18 +163,16 @@ public class GameManager : MonoBehaviour
     private Shape CreateShapeOfO(int line, int column)
     {
         var shape = new Shape();
-        var color = CreateRandomColor();
-
         if (line >= 0 && line + 1 < TotalLine)
         {
             if (column >= 0 && column + 1 < TotalColumn)
             {
                 var nodes = new Node[NodeNum];
 
-                nodes[0] = CreateNode(line, column, true, true, false, color);
-                nodes[1] = CreateNode(line, column + 1, false, true, false, color);
-                nodes[2] = CreateNode(line + 1, column, false, true, false, color);
-                nodes[3] = CreateNode(line + 1, column + 1, false, true, false, color);
+                nodes[0] = SetNode(line, column, true, true, false);
+                nodes[1] = SetNode(line, column + 1, false, true, false);
+                nodes[2] = SetNode(line + 1, column, false, true, false);
+                nodes[3] = SetNode(line + 1, column + 1, false, true, false);
 
                 shape.keyNode = nodes[0];
                 shape.nodes = nodes;
@@ -163,19 +186,15 @@ public class GameManager : MonoBehaviour
     private Shape CreateShapeOfJ(int line, int column)
     {
         var shape = new Shape();
-        var color = CreateRandomColor();
-
         if (line - 1 >= 0 && line < TotalLine)
         {
             if (column - 1 >= 0 && column + 1 < TotalColumn)
             {
                 var nodes = new Node[NodeNum];
-
-                nodes[0] = CreateNode(line, column, true, true, false, color);
-                nodes[1] = CreateNode(line, column + 1, false, true, false, color);
-                nodes[2] = CreateNode(line - 1, column - 1, false, true, false, color);
-                nodes[3] = CreateNode(line, column - 1, false, true, false, color);
-
+                nodes[0] = SetNode(line, column, true, true, false);
+                nodes[1] = SetNode(line, column + 1, false, true, false);
+                nodes[2] = SetNode(line - 1, column - 1, false, true, false);
+                nodes[3] = SetNode(line, column - 1, false, true, false);
                 shape.keyNode = nodes[0];
                 shape.nodes = nodes;
                 shape.shapeType = EmShapeType.J;
@@ -188,19 +207,15 @@ public class GameManager : MonoBehaviour
     private Shape CreateShapeOfL(int line, int column)
     {
         var shape = new Shape();
-        var color = CreateRandomColor();
-
         if (line - 1 >= 0 && line < TotalLine)
         {
             if (column - 1 >= 0 && column + 1 < TotalColumn)
             {
                 var nodes = new Node[NodeNum];
-
-                nodes[0] = CreateNode(line, column, true, true, false, color);
-                nodes[1] = CreateNode(line, column + 1, false, true, false, color);
-                nodes[2] = CreateNode(line - 1, column + 1, false, true, false, color);
-                nodes[3] = CreateNode(line, column - 1, false, true, false, color);
-
+                nodes[0] = SetNode(line, column, true, true, false);
+                nodes[1] = SetNode(line, column + 1, false, true, false);
+                nodes[2] = SetNode(line - 1, column + 1, false, true, false);
+                nodes[3] = SetNode(line, column - 1, false, true, false);
                 shape.keyNode = nodes[0];
                 shape.nodes = nodes;
                 shape.shapeType = EmShapeType.L;
@@ -213,19 +228,15 @@ public class GameManager : MonoBehaviour
     private Shape CreateShapeOfS(int line, int column)
     {
         var shape = new Shape();
-        var color = CreateRandomColor();
-
         if (line >= 0 && line + 1 < TotalLine)
         {
             if (column - 1 >= 0 && column + 1 < TotalColumn)
             {
                 var nodes = new Node[NodeNum];
-
-                nodes[0] = CreateNode(line, column, true, true, false, color);
-                nodes[1] = CreateNode(line, column + 1, false, true, false, color);
-                nodes[2] = CreateNode(line + 1, column, false, true, false, color);
-                nodes[3] = CreateNode(line + 1, column - 1, false, true, false, color);
-
+                nodes[0] = SetNode(line, column, true, true, false);
+                nodes[1] = SetNode(line, column + 1, false, true, false);
+                nodes[2] = SetNode(line + 1, column, false, true, false);
+                nodes[3] = SetNode(line + 1, column - 1, false, true, false);
                 shape.keyNode = nodes[0];
                 shape.nodes = nodes;
                 shape.shapeType = EmShapeType.S;
@@ -238,19 +249,15 @@ public class GameManager : MonoBehaviour
     private Shape CreateShapeOfZ(int line, int column)
     {
         var shape = new Shape();
-        var color = CreateRandomColor();
-
         if (line >= 0 && line + 1 < TotalLine)
         {
             if (column - 1 >= 0 && column + 1 < TotalColumn)
             {
                 var nodes = new Node[NodeNum];
-
-                nodes[0] = CreateNode(line, column, true, true, false, color);
-                nodes[1] = CreateNode(line, column - 1, false, true, false, color);
-                nodes[2] = CreateNode(line + 1, column, false, true, false, color);
-                nodes[3] = CreateNode(line + 1, column + 1, false, true, false, color);
-
+                nodes[0] = SetNode(line, column, true, true, false);
+                nodes[1] = SetNode(line, column - 1, false, true, false);
+                nodes[2] = SetNode(line + 1, column, false, true, false);
+                nodes[3] = SetNode(line + 1, column + 1, false, true, false);
                 shape.keyNode = nodes[0];
                 shape.nodes = nodes;
                 shape.shapeType = EmShapeType.Z;
@@ -263,19 +270,15 @@ public class GameManager : MonoBehaviour
     private Shape CreateShapeOfT(int line, int column)
     {
         var shape = new Shape();
-        var color = CreateRandomColor();
-
         if (line - 1 >= 0 && line < TotalLine)
         {
             if (column - 1 >= 0 && column + 1 < TotalColumn)
             {
                 var nodes = new Node[NodeNum];
-
-                nodes[0] = CreateNode(line, column, true, true, false, color);
-                nodes[1] = CreateNode(line - 1, column, false, true, false, color);
-                nodes[2] = CreateNode(line, column + 1, false, true, false, color);
-                nodes[3] = CreateNode(line, column - 1, false, true, false, color);
-
+                nodes[0] = SetNode(line, column, true, true, false);
+                nodes[1] = SetNode(line - 1, column, false, true, false);
+                nodes[2] = SetNode(line, column + 1, false, true, false);
+                nodes[3] = SetNode(line, column - 1, false, true, false);
                 shape.keyNode = nodes[0];
                 shape.nodes = nodes;
                 shape.shapeType = EmShapeType.T;
@@ -285,17 +288,15 @@ public class GameManager : MonoBehaviour
         return shape;
     }
 
-    private Node CreateNode(int line, int column, bool isKeyNode, bool isHasNode, bool isLockNode, Color color)
+    private Node SetNode(int line, int column, bool isKeyNode, bool isHasNode, bool isLockNode)
     {
         Node tempNode;
-
         tempNode.line = line;
         tempNode.column = column;
         tempNode.isKeyNode = isKeyNode;
         tempNode.isHasNode = isHasNode;
         tempNode.isLockNode = isLockNode;
         tempNode.nodeTran = GetNodeTransByLineAndColumn(line, column);
-        tempNode.nodeTran.GetComponent<Image>().color = color;
 
         return tempNode;
     }
@@ -305,15 +306,15 @@ public class GameManager : MonoBehaviour
         if (line > 0 && column > 0)
         {
             var nodePlane = new Node[line, column];
-
             for (var i = 0; i < line; i++)
             {
                 for (var j = 0; j < column; j++)
                 {
-                    nodePlane[i, j] = CreateNode(i, j, false, false, false, Color.white);
+                    nodePlane[i, j] = SetNode(i, j, false, false, false);
+                    nodePlane[i, j].SetNodeColor(DefaultColor);
                 }
             }
-
+            Debug.Log("创建成功 NodePlane");
             return nodePlane;
         }
 
@@ -322,30 +323,12 @@ public class GameManager : MonoBehaviour
 
     private Transform GetNodeTransByLineAndColumn(int line, int column)
     {
-        Transform tran = null;
         if (CheckNextOutOfIndex(line, column) == false)
         {
-            tran = this.transform.GetChild(line).GetChild(column);
+            return this.transform.GetChild(line).GetChild(column);
         }
 
-        return tran;
-    }
-
-    private Node GetNodeByLineAndColumn(int line, int column)
-    {
-        var node = new Node();
-        for (var i = 0; i < _nodePlane.GetLength(0); i++)
-        {
-            for (var j = 0; j < _nodePlane.GetLength(1); j++)
-            {
-                if (_nodePlane[i, j].line == line && _nodePlane[i, j].column == column)
-                {
-                    node = _nodePlane[i, j];
-                }
-            }
-        }
-
-        return node;
+        return null;
     }
 
     private bool CheckLineAndColumnHasNode(int lineIndex, int columnIndex)
@@ -355,8 +338,7 @@ public class GameManager : MonoBehaviour
             return true;
         }
 
-        if (_nodePlane[lineIndex, columnIndex].isHasNode == true &&
-            _nodePlane[lineIndex, columnIndex].isLockNode == false)
+        if (_nodePlane[lineIndex, columnIndex].isHasNode == true && _nodePlane[lineIndex, columnIndex].isLockNode == false)
         {
             return true;
         }
@@ -383,110 +365,101 @@ public class GameManager : MonoBehaviour
 
     private void LightColorOfShape(Shape shape, Color color)
     {
-        Node[] nodes = shape.nodes;
-        for (var i = 0; i < nodes.Length; i++)
+        for (var i = 0; i < shape.nodes.Length; i++)
         {
-            var node = nodes[i];
+            var node = shape.nodes[i];
             LightColorOfNode(node, color);
         }
     }
 
     private static void LightColorOfNode(Node node, Color color)
     {
-        if (node.nodeTran != null && node.nodeTran.GetComponent<Image>() != null)
+        if (node.nodeTran == null || node.nodeTran.GetComponent<Image>() == null) return;
+        node.nodeTran.GetComponent<Image>().color = color;
+        var isWhite = Math.Abs(color.r - 1f) < 0.01f && Math.Abs(color.b - 1f) < 0.01f &&
+                      Math.Abs(color.g - 1f) < 0.01f;
+        if (isWhite)
         {
-            node.nodeTran.GetComponent<Image>().color = color;
-            var isWhite = Math.Abs(color.r - 1f) < 0.01f && Math.Abs(color.b - 1f) < 0.01f &&
-                          Math.Abs(color.g - 1f) < 0.01f;
-            if (isWhite)
-            {
-                var c = node.nodeTran.GetComponent<Image>().color;
-                node.nodeTran.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0.3f);
-            }
-            else
-            {
-                var c = node.nodeTran.GetComponent<Image>().color;
-                node.nodeTran.GetComponent<Image>().color = new Color(c.r, c.g, c.b, 0.6f);
-            }
+            var c = node.nodeTran.GetComponent<Image>().color;
+            node.nodeTran.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0.3f);
+        }
+        else
+        {
+            var c = node.nodeTran.GetComponent<Image>().color;
+            node.nodeTran.GetComponent<Image>().color = new Color(c.r, c.g, c.b, 0.6f);
         }
     }
 
-    public void Rotate(Shape shape)
+    public void Rotate()
     {
-        if (shape == null && shape.nodes == null)
-        {
-            return;
-        }
-
+        var image = _lockShape.nodes[0].nodeTran.GetComponent<Image>();
+        if (_lockShape?.nodes == null) return;
         if (_lockMove)
         {
-            LightColorOfShape(_lockShape, shape.nodes[0].nodeTran.GetComponent<Image>().color);
+            LightColorOfShape(_lockShape, image.color);
             return;
         }
 
-        for (var i = 0; i < shape.nodes.Length; i++)
+        for (var i = 0; i < _lockShape.nodes.Length; i++)
         {
-            shape.nodes[i].isHasNode = false;
+            _lockShape.nodes[i].isHasNode = false;
         }
 
-        if (RotateByNodes(shape.nodes))
-        {
-            return;
-        }
-
+        if (RotateByNodes(_lockShape.nodes)) return;
+        LightColorOfShape(_lockShape, image.color);
         _lockMove = false;
     }
 
     private bool RotateByNodes(Node[] nodes)
     {
+        var color = nodes[0].nodeTran.GetComponent<Image>().color;
+        LightColorOfShape(_lockShape, Color.white);
         for (var i = 0; i < nodes.Length; i++)
         {
-            if (i != 0)
+            if (i == 0) continue;
+            
+            var up = nodes[i].line - nodes[0].line;
+            var left = nodes[i].column - nodes[0].column;
+
+            if (up == 0 || left == 0)
             {
-                var up = nodes[i].line - nodes[0].line;
-                var left = nodes[i].column - nodes[0].column;
-
-                if (up == 0 || left == 0)
+                if (up < 0 || up > 0)
                 {
-                    if (up < 0 || up > 0)
-                    {
-                        left = -up;
-                        up = 0;
-                    }
-                    else if (left < 0 || left > 0)
-                    {
-                        up = left;
-                        left = 0;
-                    }
+                    left = -up;
+                    up = 0;
                 }
-                else
+                else if (left < 0 || left > 0)
                 {
-                    var tempUp = up;
                     up = left;
-                    left = -tempUp;
+                    left = 0;
                 }
-
-                var finalLine = nodes[0].line + up;
-                var finalColumn = nodes[0].column + left;
-                var checkHasNode = CheckLineAndColumnHasNode(finalLine, finalColumn);
-                var checkOutOfIndex = CheckNextOutOfIndex(finalLine, finalColumn);
-
-                if (checkHasNode || checkOutOfIndex)
-                {
-                    EditorApplication.isPaused = true;
-                    return true;
-                }
-
-                LightColorOfShape(_lockShape, Color.white);
-
-                nodes[i].line = finalLine;
-                nodes[i].column = finalColumn;
-                nodes[i].nodeTran = GetNodeTransByLineAndColumn(finalLine, finalColumn);
-                nodes[i].isHasNode = true;
             }
-        }
+            else
+            {
+                var tempUp = up;
+                up = left;
+                left = -tempUp;
+            }
 
-        LightColorOfShape(_lockShape, nodes[0].nodeTran.GetComponent<Image>().color);
+            var finalLine = nodes[0].line + up;
+            var finalColumn = nodes[0].column + left;
+            var checkHasNode = CheckLineAndColumnHasNode(finalLine, finalColumn);
+            var checkOutOfIndex = CheckNextOutOfIndex(finalLine, finalColumn);
+
+            if (checkHasNode || checkOutOfIndex)
+            {
+                EditorApplication.isPaused = true;
+                return true;
+            }
+
+            nodes[i].line = finalLine;
+            nodes[i].column = finalColumn;
+            nodes[i].nodeTran = GetNodeTransByLineAndColumn(finalLine, finalColumn);
+            nodes[i].isHasNode = true;
+            
+        }
+        LightColorOfShape(_lockShape,color);
+
         return false;
     }
 
@@ -567,31 +540,8 @@ public class GameManager : MonoBehaviour
         LightColorOfShape(_lockShape, color);
     }
 
-    private void Rotate()
-    {
-        Rotate(_lockShape);
-    }
-
     private void Start()
     {
-        for (var y = 0; y < _columns.Length; y++)
-        {
-            _columns[y] = new Transform[14];
-        }
-
-        for (var k = 0; k < transform.childCount; k++)
-        {
-            _lines[k] = transform.GetChild(k);
-        }
-
-        for (var i = 0; i < _lines.Length; i++)
-        {
-            for (var j = 0; j < _lines[i].childCount; j++)
-            {
-                _columns[i][j] = _lines[i].GetChild(j);
-            }
-        }
-
         _nodePlane = CreateNodePlane(TotalLine, TotalColumn);
         LightColorOfPlane(_nodePlane);
     }
@@ -635,54 +585,54 @@ public class GameManager : MonoBehaviour
 
     private void CreatableSystem()
     {
-        if (_createOrder == false)
-        {
-            return;
-        }
+        if (_createOrder == false) return;
 
         _createOrder = false;
         _lockMove = false;
 
         var enums = Enum.GetValues(typeof(EmShapeType));
-        int typeIndex = UnityEngine.Random.Range(0, enums.Length);
+        var typeIndex = UnityEngine.Random.Range(0, enums.Length);
         var type = (EmShapeType) enums.GetValue(typeIndex);
-
+        Debug.Log("======================== FGX ==========================");
         _lockShape = CreateShapeByTypeAndKeyNode(1, 7, type);
+
+        var color = CreateRandomColor();
+        _lockShape.SetNodeColor(color);
+
         LightColorOfShape(_lockShape, _lockShape.nodes[0].nodeTran.GetComponent<Image>().color);
     }
 
     private void RemoveSystem()
     {
-        if (_isCanCheckRemove == true)
+        if (_isCanCheckRemove != true) return;
+
+        _isCanCheckRemove = false;
+        for (var i = 0; i < TotalLine; i++)
         {
-            _isCanCheckRemove = false;
-            for (var i = 0; i < TotalLine; i++)
+            for (var j = 0; j < TotalColumn; j++)
             {
-                for (var j = 0; j < TotalColumn; j++)
+                var position = new Vector2Int(i, j);
+                if (_nodePlane[position.x, position.y].isHasNode == false)
                 {
-                    var position = new Vector2Int(i, j);
-                    if (_nodePlane[position.x, position.y].isHasNode == false)
+                    break;
+                }
+                else if (j == TotalColumn - 1)
+                {
+                    for (var k = i - 1; k >= 0; k--)
                     {
-                        break;
-                    }
-                    else if (j == TotalColumn - 1)
-                    {
-                        for (var k = i - 1; k >= 0; k--)
+                        for (var l = 0; l < TotalColumn; l++)
                         {
-                            for (var l = 0; l < TotalColumn; l++)
-                            {
-                                _nodePlane[k + 1, l].isHasNode = _nodePlane[k, l].isHasNode;
-                                _nodePlane[k + 1, l].isLockNode = false;
-                                _nodePlane[k + 1, l].isKeyNode = false;
+                            _nodePlane[k + 1, l].isHasNode = _nodePlane[k, l].isHasNode;
+                            _nodePlane[k + 1, l].isLockNode = false;
+                            _nodePlane[k + 1, l].isKeyNode = false;
 
-                                LightColorOfNode(_nodePlane[k + 1, l],
-                                    _nodePlane[k, l].nodeTran.GetComponent<Image>().color);
-                            }
+                            LightColorOfNode(_nodePlane[k + 1, l],
+                                _nodePlane[k, l].nodeTran.GetComponent<Image>().color);
                         }
-
-                        LightColorOfPlane(_nodePlane);
-                        AudioManager.instance.Play(EM_AUDIO_TYPE.REMOVE);
                     }
+
+                    LightColorOfPlane(_nodePlane);
+                    AudioManager.instance.Play(EM_AUDIO_TYPE.REMOVE);
                 }
             }
         }
@@ -690,11 +640,10 @@ public class GameManager : MonoBehaviour
 
     private void GameOverSystem()
     {
-        if (_isGameOver)
-        {
-            Debug.Log("游戏结束");
-            _isGameOver = false;
-        }
+        if (!_isGameOver) return;
+        
+        Debug.Log("游戏结束");
+        _isGameOver = false;
     }
 
     private static class InputManager
