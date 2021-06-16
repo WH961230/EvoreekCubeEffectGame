@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Monetization;
 
 public static class GameCaculater
 {
@@ -11,9 +12,19 @@ public static class GameCaculater
 
         for (var i = 0; i < GameData.LockShape.nodes.Length; ++i)
         {
-            var nextLine = GameData.LockShape.nodes[i].line + offset.x;
-            var nextColumn = GameData.LockShape.nodes[i].column + offset.y;
-            if (CheckLineOutOfRange(nextLine) || CheckNodeHasNode(nextLine, nextColumn))
+            var oldColumn = GameData.LockShape.nodes[i].column;
+            var oldLine = GameData.LockShape.nodes[i].line;
+            var nextLine = oldLine + offset.x;
+            var nextColumn = oldColumn + offset.y;
+            var isNextLineOutOfRang = CheckLineOutOfRange(nextLine);
+            var isNextLineHasNode = CheckNodeHasNode(nextLine, oldColumn);
+            var isNextColumnOutOfRang = CheckColumnOutOfRange(nextColumn);
+            var isNextColumnHasNode = CheckNodeHasNode(oldLine, nextColumn);
+            if (isNextColumnOutOfRang || isNextColumnHasNode)
+            {
+                return;
+            }
+            if (isNextLineOutOfRang || isNextLineHasNode)
             {
                 Debug.Log("node is landed");
                 SetKeyNodeOfShape(false);
@@ -25,22 +36,52 @@ public static class GameCaculater
             }
         }
 
-        GameData.LockShape.nodes[0].line += offset.x;
-        GameData.LockShape.nodes[1].line += offset.x;
-        GameData.LockShape.nodes[2].line += offset.x;
-        GameData.LockShape.nodes[3].line += offset.x;
-
-        GameData.LockShape.nodes[0].column += offset.y;
-        GameData.LockShape.nodes[1].column += offset.y;
-        GameData.LockShape.nodes[2].column += offset.y;
-        GameData.LockShape.nodes[3].column += offset.y;
-
-        GameData.LockShape.nodes[0].nodeTran = GetTranByLineAndColumn(GameData.LockShape.nodes[0].line, GameData.LockShape.nodes[0].column);
-        GameData.LockShape.nodes[1].nodeTran = GetTranByLineAndColumn(GameData.LockShape.nodes[1].line, GameData.LockShape.nodes[1].column);
-        GameData.LockShape.nodes[2].nodeTran = GetTranByLineAndColumn(GameData.LockShape.nodes[2].line, GameData.LockShape.nodes[2].column);
-        GameData.LockShape.nodes[3].nodeTran = GetTranByLineAndColumn(GameData.LockShape.nodes[3].line, GameData.LockShape.nodes[3].column);
+        for (int i = 0; i < GameData.LockShape.nodes.Length; i++)
+        {
+            GameData.LockShape.nodes[i].line += offset.x;
+            GameData.LockShape.nodes[i].column += offset.y;
+            GameData.LockShape.nodes[i].nodeTran = GetTranByLineAndColumn(GameData.LockShape.nodes[i].line, GameData.LockShape.nodes[i].column);
+        }
     }
 
+    public static void Rotate()
+    {
+        Debug.Log("旋转实现");
+    }
+
+    public static void Remove()
+    {
+        if (GameData.nodePlane == null)
+        {
+            return;
+        }
+        
+        for (int i = 0; i < GameData.RowCount; i++)
+        {
+            var isAllHasNode = true;
+            for (int j = 0; j < GameData.ColumnCount; j++)
+            {
+                if (GameData.nodePlane[i, j].isHasNode == false)
+                {
+                    isAllHasNode = false;
+                    break;
+                }
+            }
+
+            if (isAllHasNode == true)
+            {
+                Debug.Log(i + "行消除实现");
+                Reward();
+            }
+        }
+    }
+
+    private static void Reward()
+    {
+        Debug.Log("奖励实现");
+        GameData.Score += 100;
+    }
+    
     // public static void Rotate()
     // {
     //      Node[] tempNodes = new Node[4];
@@ -141,7 +182,7 @@ public static class GameCaculater
     {
         return line >= GameData.TotalLine || line < 0;
     }
-    
+
     private static bool CheckNodeHasNode(int line, int column)
     {
         if (GameData.nodePlane == null)
