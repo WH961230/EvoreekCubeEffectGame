@@ -1,3 +1,4 @@
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -94,7 +95,8 @@ public class Game : MonoBehaviour
                     GameData.emAct = EmAct.Rotate;
                }
 
-               if (Input.GetKeyUp(KeyCode.S) || Input.GetKeyUp(KeyCode.A) || Input.GetKeyUp(KeyCode.D) || Input.GetKeyUp(KeyCode.Space))
+               if (Input.GetKeyUp(KeyCode.S) || Input.GetKeyUp(KeyCode.A) || Input.GetKeyUp(KeyCode.D) ||
+                   Input.GetKeyUp(KeyCode.Space))
                {
                     GameData.emAct = EmAct.Default;
                     GameData.isAutoMove = true;
@@ -139,7 +141,9 @@ public class Game : MonoBehaviour
 
      private void PlayRotate()
      {
+          ColorLockShape(Color.white);
           GameCaculater.Rotate();
+          ColorLockShape(Color.red);
      }
 
      private void InternalTimeEvent()
@@ -159,18 +163,16 @@ public class Game : MonoBehaviour
                     }
                     ColorLockShape(Color.white);
                     GameCaculater.Move(new Vector2Int(1,0));
-                    ColorLockShape(Color.red);  
-               }
-               else
-               {
-
+                    ColorLockShape(Color.red);
                     if (GameData.isLanded == true)
                     {
                          RemoveListener();
                          GameOverListener();
                     }
+               }
+               else
+               {
                     GameData.LockShape = GameData.InitShape(2,GameData.TotalColumn / 2,4, EmShapeType.Z);
-
                     GameCaculater.ResetState();
                }
                deployTimer = AutoTimeInterval;

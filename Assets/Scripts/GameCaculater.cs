@@ -60,7 +60,72 @@ public static class GameCaculater
 
     public static void Rotate()
     {
-        Debug.Log("旋转实现");
+        int up;
+        int left;
+        var nextV2 = new Vector2Int[4];
+        // 如果旋转后的位置有节点或者越界则返回
+        for (int i = 0; i < GameData.LockShape.nodes.Length; i++)
+        {
+            if (i == 0) // 中心节点除外
+            {
+                continue;
+            }
+            up = GameData.LockShape.nodes[i].line - GameData.LockShape.nodes[0].line;
+            left = GameData.LockShape.nodes[i].column - GameData.LockShape.nodes[0].column;
+            var v2 = new Vector2Int(GameData.LockShape.nodes[0].line + CaculateRotate(up, left).x, GameData.LockShape.nodes[0].column + CaculateRotate(up, left).y);
+            nextV2[i] = v2;
+            if (CheckNodeHasNode(v2.x, v2.y) || CheckLineOutOfRange(v2.x) ||
+                CheckColumnOutOfRange(v2.y))
+            {
+                Debug.Log("越界");
+                return;
+            }
+        }
+
+        for (int i = 0; i < GameData.LockShape.nodes.Length; i++)
+        { 
+            GameData.LockShape.nodes[i].isLockNode = false;
+        }
+
+        for (int i = 0; i < GameData.LockShape.nodes.Length; i++)
+        {
+            if (i == 0)
+            {
+                continue;
+            }
+            GameData.LockShape.nodes[i].line = nextV2[i].x;
+            GameData.LockShape.nodes[i].column = nextV2[i].y;
+            GameData.LockShape.nodes[i].isLockNode = true;
+            GameData.LockShape.nodes[i].nodeTran = GetTranByLineAndColumn(nextV2[i].x, nextV2[i].y);
+        }
+    }
+
+    private static Vector2Int CaculateRotate(int up, int left)
+    {
+        Vector2Int ret = Vector2Int.zero;
+        if (up == 0 || left == 0)
+        {
+            if (up < 0 || up > 0)
+            {
+                left = -up;
+                up = 0;
+            }
+            else if (left < 0 || left > 0)
+            {
+                up = left;
+                left = 0;
+            }
+        }
+        else
+        {
+            var tempUp = up;
+            up = left;
+            left = -tempUp;
+        }
+
+        ret.x = up;
+        ret.y = left;
+        return ret;
     }
 
     public static void Remove()
@@ -183,6 +248,7 @@ public static class GameCaculater
     public static void ResetState()
     {
         GameData.isLanded = false;
+        GameData.emAct = EmAct.Default;
     }
 
     private static void SetKeyNodeOfShape(bool value)
