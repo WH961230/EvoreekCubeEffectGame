@@ -1,6 +1,4 @@
-using System;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class Game : MonoBehaviour
@@ -132,9 +130,9 @@ public class Game : MonoBehaviour
           }
           else
           {
-               AddColor(Color.white);
+               ColorLockShape(Color.white);
                GameCaculater.Move(offset);
-               AddColor(Color.red);
+               ColorLockShape(Color.red);
                inputTimer = interval;
           }
      }
@@ -159,9 +157,9 @@ public class Game : MonoBehaviour
                          deployTimer = 0f;
                          return;
                     }
-                    AddColor(Color.white);
+                    ColorLockShape(Color.white);
                     GameCaculater.Move(new Vector2Int(1,0));
-                    AddColor(Color.red);  
+                    ColorLockShape(Color.red);  
                }
                else
                {
@@ -183,6 +181,7 @@ public class Game : MonoBehaviour
      {
           GameOverPlane.gameObject.SetActive(false);
           //清理表盘
+          ColorNodePlane(Color.white);
           GameData.nodePlane = null;
           GameData.LockShape = null;
           initParam = false;
@@ -190,7 +189,7 @@ public class Game : MonoBehaviour
           GameData.isGameOver = false;
      }
 
-     private void AddColor(Color color)
+     private void ColorLockShape(Color color)
      {
           foreach (var node in GameData.LockShape.nodes)
           {
@@ -199,6 +198,17 @@ public class Game : MonoBehaviour
                     return;
                }
                node.nodeTran.GetComponent<Image>().color = color;
+          }
+     }
+
+     private void ColorNodePlane(Color color)
+     {
+          for (var i = 0; i < GameData.RowCount; i++)
+          {
+               for (var j = 0; j < GameData.ColumnCount; j++)
+               {
+                    GameData.nodePlane[i, j].nodeTran.GetComponent<Image>().color = color;
+               }
           }
      }
 
