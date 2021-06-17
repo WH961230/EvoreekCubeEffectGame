@@ -55,6 +55,8 @@ public partial class GameData
     private static int ColumnIndex => nodePlane.GetLength(1) - 1;
 
     public static int Score = 0;
+
+    public static bool isGameOver = false;
     
     public static Node GetNodeOfNodePlane(int line, int column)
     {

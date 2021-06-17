@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
@@ -13,15 +14,27 @@ public class Game : MonoBehaviour
      private bool initPlane = false;
      private bool pause = false;
      public Text ScoreText;
+     public Transform GameOverPlane;
      private int score;
+
+     private void Start()
+     {
+          GameOverPlane.GetComponentInChildren<Button>().onClick.AddListener(RestartGame);
+     }
+
      private void Update()
      {
           Debug.Log(GameData.emAct);
+          if (GameData.isGameOver == true)
+          {
+               return;
+          }
+
           if (Init() == false)
           {
                return;
           }
-          
+
           if (Input.GetKeyDown(KeyCode.P))
           {
                pause = !pause;
@@ -50,6 +63,16 @@ public class Game : MonoBehaviour
      {
           GameCaculater.Remove();
           Debug.Log("消除检测");
+     }
+
+     private void GameOverListener()
+     {
+          GameData.isGameOver = GameCaculater.GameOver();
+          if (GameData.isGameOver == true)
+          {
+               GameOverPlane.gameObject.SetActive(true);
+               GameOverPlane.GetComponentInChildren<Text>().text = "GameOver";
+          }
      }
 
      private void ActListener()
@@ -142,16 +165,29 @@ public class Game : MonoBehaviour
                }
                else
                {
-                    GameData.LockShape = GameData.InitShape(2,GameData.TotalColumn / 2,4, EmShapeType.Z);
 
                     if (GameData.isLanded == true)
                     {
                          RemoveListener();
+                         GameOverListener();
                     }
+                    GameData.LockShape = GameData.InitShape(2,GameData.TotalColumn / 2,4, EmShapeType.Z);
+
                     GameCaculater.ResetState();
                }
                deployTimer = AutoTimeInterval;
           }
+     }
+
+     private void RestartGame()
+     {
+          GameOverPlane.gameObject.SetActive(false);
+          //清理表盘
+          GameData.nodePlane = null;
+          GameData.LockShape = null;
+          initParam = false;
+          initPlane = false;
+          GameData.isGameOver = false;
      }
 
      private void AddColor(Color color)

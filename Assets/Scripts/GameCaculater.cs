@@ -1,5 +1,5 @@
 using UnityEngine;
-using UnityEngine.Monetization;
+using UnityEngine.UI;
 
 public static class GameCaculater
 {
@@ -44,6 +44,20 @@ public static class GameCaculater
         }
     }
 
+    public static bool GameOver()
+    {
+        foreach (var node in GameData.LockShape.nodes)
+        {
+            if (node.line <= 4)
+            {
+                Debug.Log("您已达到最高，游戏结束");
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public static void Rotate()
     {
         Debug.Log("旋转实现");
@@ -55,11 +69,12 @@ public static class GameCaculater
         {
             return;
         }
-        
-        for (int i = 0; i < GameData.RowCount; i++)
+
+        var lineNum = 0;
+        for (var i = 0; i < GameData.RowCount; i++)
         {
             var isAllHasNode = true;
-            for (int j = 0; j < GameData.ColumnCount; j++)
+            for (var j = 0; j < GameData.ColumnCount; j++)
             {
                 if (GameData.nodePlane[i, j].isHasNode == false)
                 {
@@ -71,15 +86,48 @@ public static class GameCaculater
             if (isAllHasNode == true)
             {
                 Debug.Log(i + "行消除实现");
-                Reward();
+                lineNum += 1;
+                DownNode(i);
+            }
+        }
+        Reward(lineNum);
+    }
+
+    private static void DownNode(int lineIndex)
+    {
+        for (int i = lineIndex - 1; i >= 0; i--)
+        {
+            for (int j = 0; j < GameData.ColumnCount; j++)
+            {
+                GameData.nodePlane[i + 1, j].isHasNode = GameData.nodePlane[i, j].isHasNode;
+                GameData.nodePlane[i + 1, j].nodeTran.GetComponent<Image>().color = GameData.nodePlane[i, j].nodeTran.GetComponent<Image>().color;
+                GameData.nodePlane[i + 1, j].isKeyNode = false;
+                GameData.nodePlane[i + 1, j].isLockNode = false;
             }
         }
     }
 
-    private static void Reward()
+    private static void Reward(int lineNum)
     {
-        Debug.Log("奖励实现");
-        GameData.Score += 100;
+        var addScore = 0;
+        if (lineNum == 1)
+        {
+            addScore = 10;
+        } 
+        else if (lineNum == 2)
+        {
+            addScore = 30;
+        }
+        else if (lineNum == 3)
+        {
+            addScore = 60;
+        }
+        else if (lineNum == 4)
+        {
+            addScore = 100;
+        }
+        GameData.Score += addScore;
+        Debug.Log("奖励实现 增加 + " + addScore + "# 总积分： " + GameData.Score);
     }
     
     // public static void Rotate()
