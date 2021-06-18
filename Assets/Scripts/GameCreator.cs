@@ -22,7 +22,8 @@ public partial class GameData
         switch (type)
         {
             case EmShapeType.O:
-                shape = InitShapeOfO(line, column, nodeNum);
+                var nodeValList = new int[4,2] {{line,column},{line,column+1},{line+1,column},{line+1,column+1}};
+                shape = InitShape(line, column, nodeNum, nodeValList, EmShapeType.O);
                 Debug.Log("创建图案 O");
                 break;
             // case EmShapeType.I:
@@ -41,10 +42,10 @@ public partial class GameData
             //     shape = CreateShapeOfS(line, column, NodeNum, totalLine, totalColumn);
             //     Debug.Log("创建图案 S");
             //     break;
-            case EmShapeType.Z:
-                shape = InitShapeOfZ(line, column, nodeNum);
-                Debug.Log("创建图案 Z");
-                break;
+            // case EmShapeType.Z:
+            //     shape = InitShapeOfZ(line, column, nodeNum);
+            //     Debug.Log("创建图案 Z");
+            //     break;
             // case EmShapeType.T:
             //     shape = CreateShapeOfT(line, column, NodeNum, totalLine, totalColumn);
             //     Debug.Log("创建图案 T");
@@ -57,24 +58,31 @@ public partial class GameData
         return shape;
     }
     
-    private static Shape InitShapeOfO(int line, int column, int nodeNum)
+    private static Shape InitShape(int line, int column, int nodeNum, int[,] nodeValList, EmShapeType type)
     {
         var shape = new Shape();
+        int lineLow;
+        int lineHigh;
+        int columnLow;
+        int columnHigh;
+        foreach (var val in nodeValList)
+        {
+        }
         if (line >= 0 && line + 1 < GameData.TotalLine)
         {
             if (column >= 0 && column + 1 < GameData.TotalColumn)
             {
                 var nodes = new Node[nodeNum];
-                nodes[0] = InitNode(line, column, true, false, true);
-                nodes[0].nodeTran = InitNodeTran(GameData.parentTran, line, column);
-                nodes[1] = InitNode(line, column + 1, false, false, true);
-                nodes[1].nodeTran = InitNodeTran(GameData.parentTran, line, column + 1);
-                nodes[2] = InitNode(line + 1, column, false, false, true);
-                nodes[2].nodeTran = InitNodeTran(GameData.parentTran, line + 1, column);
-                nodes[3] = InitNode(line + 1, column + 1, false, false, true);
-                nodes[3].nodeTran = InitNodeTran(GameData.parentTran, line + 1, column + 1);
+                nodes[0] = InitNode(nodeValList[0,0], nodeValList[0,1], true, false, true);
+                nodes[0].nodeTran = InitNodeTran(GameData.parentTran, nodeValList[0,0], nodeValList[0,1]);
+                nodes[1] = InitNode(nodeValList[1,0], nodeValList[1,1], false, false, true);
+                nodes[1].nodeTran = InitNodeTran(GameData.parentTran, nodeValList[1,0], nodeValList[1,1]);
+                nodes[2] = InitNode(nodeValList[2,0], nodeValList[2,1], false, false, true);
+                nodes[2].nodeTran = InitNodeTran(GameData.parentTran, nodeValList[2,0], nodeValList[2,1]);
+                nodes[3] = InitNode(nodeValList[3,0], nodeValList[3,1], false, false, true);
+                nodes[3].nodeTran = InitNodeTran(GameData.parentTran, nodeValList[3,0], nodeValList[3,1]);
                 shape.nodes = nodes;
-                shape.shapeType = EmShapeType.O;
+                shape.shapeType = type;
             }
         }
      

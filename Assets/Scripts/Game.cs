@@ -1,3 +1,4 @@
+using System;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
@@ -172,7 +173,10 @@ public class Game : MonoBehaviour
                }
                else
                {
-                    GameData.LockShape = GameData.InitShape(2,GameData.TotalColumn / 2,4, EmShapeType.Z);
+                    var type = Enum.GetValues(typeof(EmShapeType));
+                    var temp = UnityEngine.Random.Range(0, type.Length);
+                    var typeRet = (EmShapeType)type.GetValue(temp);
+                    GameData.LockShape = GameData.InitShape(2,GameData.TotalColumn / 2,4, typeRet);
                     GameCaculater.ResetState();
                }
                deployTimer = AutoTimeInterval;

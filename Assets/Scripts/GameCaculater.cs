@@ -194,57 +194,7 @@ public static class GameCaculater
         GameData.Score += addScore;
         Debug.Log("奖励实现 增加 + " + addScore + "# 总积分： " + GameData.Score);
     }
-    
-    // public static void Rotate()
-    // {
-    //      Node[] tempNodes = new Node[4];
-    //      for (var i = 0; i < GameData.LockShape.nodes.Length; i++)
-    //      {
-    //          if (i == 0) continue;
-    //          
-    //          var up = GameData.LockShape.nodes[i].line - GameData.LockShape.nodes[0].line;
-    //          var left = GameData.LockShape.nodes[i].column - GameData.LockShape.nodes[0].column;
-    //
-    //          if (up == 0 || left == 0)
-    //          {
-    //              if (up < 0 || up > 0)
-    //              {
-    //                  left = -up;
-    //                  up = 0;
-    //              }
-    //              else if (left < 0 || left > 0)
-    //              {
-    //                  up = left;
-    //                  left = 0;
-    //              }
-    //          }
-    //          else
-    //          {
-    //              var tempUp = up;
-    //              up = left;
-    //              left = -tempUp;
-    //          }
-    //
-    //          var nextLine = GameData.LockShape.nodes[0].line + up;
-    //          var nextColumn = GameData.LockShape.nodes[0].column + left;
-    //
-    //          if (CheckNodeHasNode(nextLine,nextColumn) || CheckOutOfRange(nextLine,nextColumn))
-    //          {
-    //              for (var h = 0; h < GameData.LockShape.nodes.Length; h++)
-    //              {
-    //                  GameData.LockShape.nodes[h].isHasNode = true;
-    //              }
-    //              return;
-    //          }
-    //
-    //          tempNodes[i].line = nextLine;
-    //          tempNodes[i].column = nextColumn;
-    //          tempNodes[i].nodeTran = GetTranByLineAndColumn(nextLine, nextColumn);
-    //          tempNodes[i].isHasNode = true;
-    //      }
-    //
-    //      GameData.LockShape.nodes = tempNodes;
-    // }
+
     public static void ResetState()
     {
         GameData.isLanded = false;
