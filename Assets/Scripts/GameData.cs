@@ -33,11 +33,11 @@ public class Shape
 
 public partial class GameData
 {
-    public const int TotalLine = 25;
+    public static int TotalLine;
     
-    public const int TotalColumn = 14;
+    public static int TotalColumn;
     
-    public static Node[,] nodePlane = new Node[TotalLine, TotalColumn];
+    public static Node[,] nodePlane;
     
     public static Shape LockShape;
     
@@ -51,12 +51,31 @@ public partial class GameData
     
     public static EmAct emAct;
 
+    public static bool isCreateShape = false;
+
+    private static bool isLoadPlane = false;
     private static int RowIndex => nodePlane.GetLength(0) - 1;
     private static int ColumnIndex => nodePlane.GetLength(1) - 1;
 
     public static int Score = 0;
 
     public static bool isGameOver = false;
+
+    private static SOCreatable config;
+    public static void Init()
+    {
+        var createConfigPath = ConfigManager.Instance.configDic[CreateConfig];
+        config = AssetLoader.Instance.Load<SOCreatable>(createConfigPath);
+
+        InitData();
+    }
+
+    private static void InitData()
+    {
+        TotalLine = config.TotalLine;
+        TotalColumn = config.TotalColumn;
+        nodePlane = new Node[TotalLine, TotalColumn];
+    }
     
     public static Node GetNodeOfNodePlane(int line, int column)
     {

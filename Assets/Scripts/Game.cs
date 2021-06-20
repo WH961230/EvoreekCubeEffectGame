@@ -1,6 +1,6 @@
 using System;
-using UnityEditor;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class Game : MonoBehaviour
@@ -15,16 +15,25 @@ public class Game : MonoBehaviour
      private bool pause = false;
      public Text ScoreText;
      public Transform GameOverPlane;
+     public Transform GameStartPlane;
+     public Button GameRestartBtn; 
+     public Button GameBackMenuBtn;
+     public Button GameStartBtn;
+     public Button GameQuitBtn;
      private int score;
 
      private void Start()
      {
-          GameOverPlane.GetComponentInChildren<Button>().onClick.AddListener(RestartGame);
+          GameData.Init();
+          GameRestartBtn.onClick.AddListener(RestartGame);
+          GameStartBtn.onClick.AddListener(RestartGame);
+          GameBackMenuBtn.onClick.AddListener(BackMenuGame);
+          GameQuitBtn.onClick.AddListener(QuitGame);
+          GameData.isCreateShape = true;
      }
 
      private void Update()
      {
-          Debug.Log(GameData.emAct);
           if (GameData.isGameOver == true)
           {
                return;
@@ -48,6 +57,21 @@ public class Game : MonoBehaviour
           RewardListener();
           ActListener();
           InternalTimeEvent();
+          CreateListener();
+     }
+
+     private void CreateListener()
+     {
+          if (GameData.isCreateShape == false)
+          {
+               return;
+          }
+          var type = Enum.GetValues(typeof(EmShapeType));
+          var temp = UnityEngine.Random.Range(0, type.Length);
+          var typeRet = (EmShapeType)type.GetValue(temp);
+          GameData.LockShape = GameData.InitShape(2,GameData.TotalColumn / 2,4, typeRet);
+          GameCaculater.ResetState();
+          GameData.isCreateShape = false;
      }
 
      private void RewardListener()
@@ -71,7 +95,6 @@ public class Game : MonoBehaviour
           if (GameData.isGameOver == true)
           {
                GameOverPlane.gameObject.SetActive(true);
-               GameOverPlane.GetComponentInChildren<Text>().text = "GameOver";
           }
      }
 
@@ -137,6 +160,10 @@ public class Game : MonoBehaviour
                GameCaculater.Move(offset);
                ColorLockShape(Color.red);
                inputTimer = interval;
+               if (GameData.isLanded == true)
+               {
+                    AfterLandDo();
+               }
           }
      }
 
@@ -167,32 +194,55 @@ public class Game : MonoBehaviour
                     ColorLockShape(Color.red);
                     if (GameData.isLanded == true)
                     {
-                         RemoveListener();
-                         GameOverListener();
+                         AfterLandDo();
                     }
-               }
-               else
-               {
-                    var type = Enum.GetValues(typeof(EmShapeType));
-                    var temp = UnityEngine.Random.Range(0, type.Length);
-                    var typeRet = (EmShapeType)type.GetValue(temp);
-                    GameData.LockShape = GameData.InitShape(2,GameData.TotalColumn / 2,4, typeRet);
-                    GameCaculater.ResetState();
                }
                deployTimer = AutoTimeInterval;
           }
      }
 
+     private void AfterLandDo()
+     {
+          RemoveListener();
+          GameOverListener();
+          GameData.isCreateShape = true;
+     }
+
      private void RestartGame()
      {
+          GameStartPlane.gameObject.SetActive(false);
           GameOverPlane.gameObject.SetActive(false);
           //清理表盘
           ColorNodePlane(Color.white);
           GameData.nodePlane = null;
           GameData.LockShape = null;
+          GameData.Score = 0;
           initParam = false;
           initPlane = false;
           GameData.isGameOver = false;
+          GameData.isCreateShape = true;
+          GameData.isAutoMove = true;
+     }
+
+     private void BackMenuGame()
+     {
+          GameOverPlane.gameObject.SetActive(false);
+          GameStartPlane.gameObject.SetActive(true);
+          ColorNodePlane(Color.white);
+          GameData.LockShape = null;
+          GameData.Score = 0;
+          GameData.isGameOver = true;
+          GameData.isAutoMove = false;
+          GameData.isCreateShape = false;
+     }
+
+     public void QuitGame()
+     {
+#if UNITY_EDITOR
+    UnityEditor.EditorApplication.isPlaying = false;
+#else
+    Application.Quit();
+#endif     
      }
 
      private void ColorLockShape(Color color)
@@ -236,6 +286,7 @@ public class Game : MonoBehaviour
                Debug.LogError("wrong with init plane because param is init error");
                return false;
           }
+          GameData.LoadNodePlane(this.transform,GameData.TotalLine,GameData.TotalColumn);
           GameData.nodePlane = GameData.InitNodePlane(GameData.TotalLine, GameData.TotalColumn);
           return true;
      }
