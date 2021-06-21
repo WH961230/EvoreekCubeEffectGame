@@ -61,6 +61,12 @@ public partial class GameData
 
     public static bool isGameOver = false;
 
+    public static float AutoTimeInterval = 1f;
+
+    public static float MoveDownTimeInterval = 0.05f;
+
+    public static float MoveHorizontalInterval = 0.1f;
+
     private static SOCreatable config;
     public static void Init()
     {

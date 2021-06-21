@@ -1,13 +1,9 @@
 using System;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class Game : MonoBehaviour
 {
-     public float AutoTimeInterval = 1f;
-     public float MoveDownTimeInterval = 0.05f;
-     public float MoveHorizontalInterval = 0.1f;
      private float deployTimer = 0f;
      private float inputTimer = 0f;
      private bool initParam = false;
@@ -129,14 +125,14 @@ public class Game : MonoBehaviour
                switch (GameData.emAct)
                {
                     case EmAct.MoveLeft:
-                         PlayMove(new Vector2Int(0, -1),MoveHorizontalInterval);
+                         PlayMove(new Vector2Int(0, -1),GameData.MoveHorizontalInterval);
                          break;
                     case EmAct.MoveRight:
-                         PlayMove(new Vector2Int(0, 1),MoveHorizontalInterval);
+                         PlayMove(new Vector2Int(0, 1),GameData.MoveHorizontalInterval);
                          break;
                     case EmAct.MoveDown:
                          GameData.isAutoMove = false;
-                         PlayMove(new Vector2Int(1, 0),MoveDownTimeInterval);
+                         PlayMove(new Vector2Int(1, 0),GameData.MoveDownTimeInterval);
                          break;
                     case EmAct.Rotate:
                          PlayRotate();
@@ -197,7 +193,7 @@ public class Game : MonoBehaviour
                          AfterLandDo();
                     }
                }
-               deployTimer = AutoTimeInterval;
+               deployTimer = GameData.AutoTimeInterval;
           }
      }
 
