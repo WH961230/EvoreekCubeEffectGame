@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ConfigManager : MonoBehaviour
 {
@@ -38,8 +39,9 @@ public class ConfigManager : MonoBehaviour
     
     public void LoadConfig()
     {
-        var path = Path.Combine(Application.dataPath,"Config/Config.txt") ;
-        var streamList = System.IO.File.ReadAllLines(path);
+        Debug.Log(Application.dataPath);//Config/Config.txt
+        var texts = Resources.Load<TextAsset>("Config/Config").text.Replace("\r\n","\n");
+        var streamList = texts.Split('\n');
         foreach (var line in streamList)
         {
             var val = line.Split('|');

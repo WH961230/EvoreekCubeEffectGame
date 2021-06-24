@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 public class Game : MonoBehaviour
 {
@@ -12,19 +13,11 @@ public class Game : MonoBehaviour
      public Text ScoreText;
      public Transform GameOverPlane;
      public Transform GameStartPlane;
-     public Button GameRestartBtn; 
-     public Button GameBackMenuBtn;
-     public Button GameStartBtn;
-     public Button GameQuitBtn;
      private int score;
 
      private void Start()
      {
           GameData.Init();
-          GameRestartBtn.onClick.AddListener(RestartGame);
-          GameStartBtn.onClick.AddListener(RestartGame);
-          GameBackMenuBtn.onClick.AddListener(BackMenuGame);
-          GameQuitBtn.onClick.AddListener(QuitGame);
           GameData.isCreateShape = true;
      }
 
@@ -152,9 +145,9 @@ public class Game : MonoBehaviour
           }
           else
           {
-               ColorLockShape(Color.white);
+               ColorLockShape(GameData.DefaultColor);
                GameCaculater.Move(offset);
-               ColorLockShape(Color.red);
+               ColorLockShape(RandColor());
                inputTimer = interval;
                if (GameData.isLanded == true)
                {
@@ -163,11 +156,17 @@ public class Game : MonoBehaviour
           }
      }
 
+     private Color RandColor()
+     {
+          var num = Random.Range(0, GameData.Colors.Length);
+          return GameData.Colors[num];
+     }
+
      private void PlayRotate()
      {
-          ColorLockShape(Color.white);
+          ColorLockShape(GameData.DefaultColor);
           GameCaculater.Rotate();
-          ColorLockShape(Color.red);
+          ColorLockShape(RandColor());
      }
 
      private void InternalTimeEvent()
@@ -185,9 +184,9 @@ public class Game : MonoBehaviour
                          deployTimer = 0f;
                          return;
                     }
-                    ColorLockShape(Color.white);
+                    ColorLockShape(GameData.DefaultColor);
                     GameCaculater.Move(new Vector2Int(1,0));
-                    ColorLockShape(Color.red);
+                    ColorLockShape(RandColor());
                     if (GameData.isLanded == true)
                     {
                          AfterLandDo();
@@ -204,12 +203,12 @@ public class Game : MonoBehaviour
           GameData.isCreateShape = true;
      }
 
-     private void RestartGame()
+     public void RestartGame()
      {
           GameStartPlane.gameObject.SetActive(false);
           GameOverPlane.gameObject.SetActive(false);
           //清理表盘
-          ColorNodePlane(Color.white);
+          ColorNodePlane(GameData.DefaultColor);
           GameData.nodePlane = null;
           GameData.LockShape = null;
           GameData.Score = 0;
@@ -220,11 +219,11 @@ public class Game : MonoBehaviour
           GameData.isAutoMove = true;
      }
 
-     private void BackMenuGame()
+     public void BackMenuGame()
      {
           GameOverPlane.gameObject.SetActive(false);
           GameStartPlane.gameObject.SetActive(true);
-          ColorNodePlane(Color.white);
+          ColorNodePlane(GameData.DefaultColor);
           GameData.LockShape = null;
           GameData.Score = 0;
           GameData.isGameOver = true;
@@ -284,6 +283,7 @@ public class Game : MonoBehaviour
           }
           GameData.LoadNodePlane(this.transform,GameData.TotalLine,GameData.TotalColumn);
           GameData.nodePlane = GameData.InitNodePlane(GameData.TotalLine, GameData.TotalColumn);
+          ColorNodePlane(GameData.DefaultColor);
           return true;
      }
 

@@ -1,2 +1,0 @@
-createconfig|Assets/SO/CreatableConfig.asset
-prefabs|Assets/Resources/Prefabs/

@@ -10,5 +10,6 @@ public class SOCreatable : SOBase
     [Tooltip("自动下落时间间隔")] public float AutoTimeInterval = 1f;
     [Tooltip("移动下落速率")] public float MoveDownTimeInterval = 0.05f;
     [Tooltip("水平移动速率")] public float MoveHorizontalInterval = 0.1f;
-    
+    [Tooltip("色块颜色")] public Color[] Colors;
+    [Tooltip("默认色块颜色")] public Color DefaultColor = Color.white;
 }

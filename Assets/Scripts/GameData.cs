@@ -67,6 +67,10 @@ public partial class GameData
 
     public static float MoveHorizontalInterval = 0.1f;
 
+    public static Color[] Colors;
+    
+    public static Color DefaultColor;
+
     private static SOCreatable config;
     public static void Init()
     {
@@ -80,7 +84,12 @@ public partial class GameData
     {
         TotalLine = config.TotalLine;
         TotalColumn = config.TotalColumn;
+        AutoTimeInterval = config.AutoTimeInterval;
+        MoveDownTimeInterval = config.MoveDownTimeInterval;
+        MoveHorizontalInterval = config.MoveHorizontalInterval;
         nodePlane = new Node[TotalLine, TotalColumn];
+        Colors = config.Colors;
+        DefaultColor = config.DefaultColor;
     }
     
     public static Node GetNodeOfNodePlane(int line, int column)

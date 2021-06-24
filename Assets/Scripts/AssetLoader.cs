@@ -1,4 +1,3 @@
-using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -28,6 +27,6 @@ public class AssetLoader : MonoBehaviour
 
     public T Load<T>(string path) where T : Object, new()
     {
-        return AssetDatabase.LoadAssetAtPath<T>(path);
+        return Resources.Load<T>(path);
     }
 }
