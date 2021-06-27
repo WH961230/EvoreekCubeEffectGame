@@ -150,6 +150,7 @@ public static class GameCaculater
 
             if (isAllHasNode == true)
             {
+                Handheld.Vibrate();
                 Debug.Log(i + "行消除实现");
                 lineNum += 1;
                 DownNode(i);

@@ -18,7 +18,6 @@ public class Game : MonoBehaviour
      private void Start()
      {
           GameData.Init();
-          GameData.isCreateShape = true;
      }
 
      private void Update()
@@ -87,53 +86,127 @@ public class Game : MonoBehaviour
           }
      }
 
+     public void OnDownPause()
+     {
+          pause = !pause;
+     }
+
+     public void OnDownUp()
+     {
+          GameData.emAct = EmAct.Rotate;
+     }
+
+     public void OnDownDown()
+     {
+          GameData.emAct = EmAct.MoveDown;
+          GameData.isAutoMove = false;
+          PlayMove(new Vector2Int(1, 0), GameData.MoveDownTimeInterval);
+     }
+
+     public void OnDownQuik()
+     {
+          GameData.emAct = EmAct.MoveDown;
+          GameData.isAutoMove = false;
+          while (GameData.isLanded == false)
+          {
+               PlayMove(new Vector2Int(1, 0), GameData.MoveDownTimeInterval);
+          }
+          GameData.isAutoMove = true;
+     }
+
+     public void OnDownLeft()
+     {
+          GameData.emAct = EmAct.MoveLeft;
+          PlayMove(new Vector2Int(0, -1),GameData.MoveHorizontalInterval);
+     }
+
+     public void OnDownRight()
+     {
+          GameData.emAct = EmAct.MoveRight;
+          PlayMove(new Vector2Int(0, 1), GameData.MoveHorizontalInterval);
+     }
+
+     public void OnUpUp()
+     {
+          Debug.Log("onupup");
+          GameData.emAct = EmAct.Default;
+          GameData.isAutoMove = true;
+     }
+
+     public void OnUpDown()
+     {
+          GameData.emAct = EmAct.Default;
+          GameData.isAutoMove = true;
+     }
+
+     public void OnUpRight()
+     {
+          GameData.emAct = EmAct.Default;
+          GameData.isAutoMove = true;
+     }
+
+     public void OnUpLeft()
+     {
+          GameData.emAct = EmAct.Default;
+          GameData.isAutoMove = true;
+     }
+
      private void ActListener()
      {
           if (GameData.isLanded == false && GameData.LockShape != null)
           {
-               if (Input.GetKey(KeyCode.D))
-               {
-                    GameData.emAct = EmAct.MoveRight;
-               }
-               else if (Input.GetKey(KeyCode.A))
-               {
-                    GameData.emAct = EmAct.MoveLeft;
-               }
-               else if (Input.GetKey(KeyCode.S))
-               {
-                    GameData.emAct = EmAct.MoveDown;
-               } 
-               else if (Input.GetKeyDown(KeyCode.Space))
-               {
-                    GameData.emAct = EmAct.Rotate;
-               }
+               InputEvent();
+               CheckAct();
+          }
+     }
 
-               if (Input.GetKeyUp(KeyCode.S) || Input.GetKeyUp(KeyCode.A) || Input.GetKeyUp(KeyCode.D) ||
-                   Input.GetKeyUp(KeyCode.Space))
-               {
+     private static void InputEvent()
+     {
+          if (Input.GetKey(KeyCode.D))
+          {
+               GameData.emAct = EmAct.MoveRight;
+          }
+          else if (Input.GetKey(KeyCode.A))
+          {
+               GameData.emAct = EmAct.MoveLeft;
+          }
+          else if (Input.GetKey(KeyCode.S))
+          {
+               GameData.emAct = EmAct.MoveDown;
+          }
+          else if (Input.GetKeyDown(KeyCode.Space))
+          {
+               GameData.emAct = EmAct.Rotate;
+          }
+
+          if (Input.GetKeyUp(KeyCode.S) || Input.GetKeyUp(KeyCode.A) || Input.GetKeyUp(KeyCode.D) ||
+              Input.GetKeyUp(KeyCode.Space))
+          {
+               GameData.emAct = EmAct.Default;
+               GameData.isAutoMove = true;
+          }
+     }
+
+     private void CheckAct()
+     {
+          switch (GameData.emAct)
+          {
+               case EmAct.MoveLeft:
+                    PlayMove(new Vector2Int(0, -1), GameData.MoveHorizontalInterval);
+                    break;
+               case EmAct.MoveRight:
+                    PlayMove(new Vector2Int(0, 1), GameData.MoveHorizontalInterval);
+                    break;
+               case EmAct.MoveDown:
+                    GameData.isAutoMove = false;
+                    PlayMove(new Vector2Int(1, 0), GameData.MoveDownTimeInterval);
+                    break;
+               case EmAct.Rotate:
+                    PlayRotate();
                     GameData.emAct = EmAct.Default;
-                    GameData.isAutoMove = true;
-               }
-
-               switch (GameData.emAct)
-               {
-                    case EmAct.MoveLeft:
-                         PlayMove(new Vector2Int(0, -1),GameData.MoveHorizontalInterval);
-                         break;
-                    case EmAct.MoveRight:
-                         PlayMove(new Vector2Int(0, 1),GameData.MoveHorizontalInterval);
-                         break;
-                    case EmAct.MoveDown:
-                         GameData.isAutoMove = false;
-                         PlayMove(new Vector2Int(1, 0),GameData.MoveDownTimeInterval);
-                         break;
-                    case EmAct.Rotate:
-                         PlayRotate();
-                         GameData.emAct = EmAct.Default;
-                         break;
-                    default:
-                         break;
-               }
+                    break;
+               default:
+                    break;
           }
      }
 
