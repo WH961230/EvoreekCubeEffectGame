@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Creatable Config", menuName = "creatable", order = 0)]
-public class SOCreatable : SOBase
+public class SOCreatable : ScriptableObject
 {
     [Tooltip("行预制名称")] public string LinePrefabName;
     [Tooltip("节点预制名称")] public string NodePrefabName;
